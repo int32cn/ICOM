@@ -1,0 +1,28 @@
+VSVersionInfo(
+  ffi=FixedFileInfo(
+    filevers=(3, 0, 0, 1),
+    prodvers=(3, 0, 0, 1),
+    mask=0x3f,
+    flags=0x0,
+    OS=0x40004,
+    fileType=0x1,
+    subtype=0x0,
+    date=(0, 0)
+    ),
+  kids=[
+    StringFileInfo(
+      [
+      StringTable(
+        '040904B0',
+        [StringStruct('CompanyName', 'laoniu.tk'),
+        StringStruct('FileDescription', 'Contact shujunwei@QQ.com for any suggestion'),
+        StringStruct('FileVersion', '3.0.0.1'),
+        StringStruct('InternalName', 'ICOM'),
+        StringStruct('LegalCopyright', 'laoniu.tk says free to use'),
+        StringStruct('OriginalFilename', 'ICOM.exe'),
+        StringStruct('ProductName', 'ICOM Serial Tool for Windows'),
+        StringStruct('ProductVersion', '3.0.0.1')])
+      ]),
+    VarFileInfo([VarStruct('Translation', [1033, 1200])])
+  ]
+)
