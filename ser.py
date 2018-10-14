@@ -287,7 +287,7 @@ class ports_ops(CommWorkDataPro):
 				pass
 		
 		#ser_info = ser.get_settings()
-		print ('port %s setting ok',port_name)
+		print ('port %s setting ok'%port_name)
 		read_thread = Thread(target=self.port_thread_read,args=(port_name,))
 		read_thread.setDaemon(True)
 		self.set_args(port_name, {'handle':ser,'start':False,'name':port_name,'type':'serial','exception':0,'read_callback':rd_callback,'thread':read_thread,'quit':False})

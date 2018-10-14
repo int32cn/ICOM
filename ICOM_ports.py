@@ -1,6 +1,9 @@
 #!/usr/bin/python
 # -*- coding= utf-8 -*-
 
+import os
+import traceback
+
 from icom_ctrl_msg_id import *
 
 Ports_App = None
@@ -150,6 +153,7 @@ def ports_open_ports_srv(port_name,port_type,serial_settings):
 		ret_code = 0
 		ret_str = 'successful %s'%ser_info
 	except Exception as e:
+		traceback.print_exc()
 		ret_str = 'exception %s when start-ports-srv'%e
 		pass
 	return ret_code,ret_str
@@ -346,4 +350,37 @@ def ports_msg_proc(msg_type,*msg_data):
 	
 	ports_send_cmd_result(msg_type,port_name,ret_code,ret_str)
 
+
+def work_ports_main(cur_instance_num,win_title,manager_Q,ports_ctrl_Q,gui_sync_ctrl_Q,gui_data_Q):
+	ports_set_vars(manager_Q,ports_ctrl_Q,gui_sync_ctrl_Q,gui_data_Q)
+	pro_ok = 0
+	pro_fail = 0
+	gui_data_Q.put(('READY','PORTS',os.getpid()))
+	#print ('ports_ctrl_Q',ports_ctrl_Q.qsize(),ports_ctrl_Q.__dict__)
+	
+	while True:   #ctrl quit status
+		try:
+			msg_data =  ports_ctrl_Q.get()
+			#if not IN_FROZEN_STATE:
+			#	print ('work',msg_data)
+			if msg_data[0] == 'QUIT':
+				ICOM_ports.ports_msg_proc(*msg_data)
+				break
+			ICOM_ports.ports_msg_proc(*msg_data)
+			pro_ok += 1
+		except Exception as e:
+			print ('work process exception',e)
+			pro_fail += 1
+			pass
+	
+	print ('work process quit ok:%d,fail:%d\n'%(pro_ok,pro_fail))
+	os._exit(0)
+	
+if __name__ == '__main__':
+	from queue import Queue
+	manager_Q,ports_ctrl_Q,tray_ctrl_Q,netsrv_ctrl_Q,gui_sync_ctrl_Q,gui_data_Q = Queue(),Queue(),Queue(),Queue(),Queue(),Queue()
+	pro_status = [range(6)]
+	work_ports_process(0,"iCOM",manager_Q,ports_ctrl_Q,gui_sync_ctrl_Q,gui_data_Q)
+	
+	
 	

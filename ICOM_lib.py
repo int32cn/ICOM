@@ -552,10 +552,11 @@ def working_thread_task(work_Q,task_down_callback=None):
 worker_Queue = None
 
 def task_done_callback(done_status,task_param):
-	if ports_gui is not None:
+	if ports_gui is not None and _win_icom is not None:
 		if isinstance(task_param,dict) and 'ver' in task_param and isinstance(task_param['ver'],int):
 			#ports_gui.set_cmd_auto_save_ver(task_param)
-			ports_gui._after_schecule('save-config-done',0,ports_gui.set_cmd_auto_save_ver,task_param['ver'])
+			_win_icom.event_generate('<<QUIT-event-QUIT>>', data=task_param['ver'])
+			#ports_gui._after_schecule('save-config-done',0,ports_gui.set_cmd_auto_save_ver,task_param['ver'])
 		elif task_param is not None:
 			#frm = ports_gui.get_drop_area_wiget().config(bg='#FFFFF0')
 			#frm.config(bg='#FFFFF0')
@@ -692,7 +693,7 @@ def receive_data_thread_task(timeout_sync=False):
 	while True:
 		try:
 			out_data = out_Q.get(block=False)
-			#print (type(out_data),out_data)
+			print (type(out_data),out_data)
 			if isinstance(out_data,list):
 				for data_msg in out_data:
 					need_trig = receive_data_proc(*data_msg)

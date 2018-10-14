@@ -2682,7 +2682,7 @@ class com_ports_gui:
 		
 	def __do_after_schecule(self,schecule_widget,event_cause,timeafter,process_func,*args):
 		if self.__tid != current_thread().ident:
-			print ('error after schedule from other thread, return')
+			print ('error after schedule from other thread, return', event_cause, process_func)
 			return None
 		
 		#note: the same event_cause statics
@@ -3849,7 +3849,7 @@ class com_ports_gui:
 	def __set_recv_decoding(self,event=None):
 		try:
 			new_codec = self.__recv_decoding_var.get()
-			'recv_decoding.test'.encode(new_codec)
+			b'recv_decoding.test'.decode(new_codec)
 			self.__config['display_encoding'] = new_codec
 		except Exception as e:
 			self.show_tips('set recv codec(%s) error'%e,0)
@@ -4172,6 +4172,11 @@ class com_ports_gui:
 		event_info = args[0]
 		#print ('Q-event',event_info.serial, event_info.x, event_info.y)
 		self.do_gui_callback(None,'msg_quit',cause='ctrl_quit')
+	def _on_save_config_done(self,*args):
+		print("args", args)
+		ver = args[0]
+		if isinstance(ver, int):
+			self.set_cmd_auto_save_ver(ver)
 	def refresh_serial_and_nets(self):
 		if self.__need_refresh_gui_dev is False:
 			return
@@ -4321,6 +4326,7 @@ class com_ports_gui:
 			self.__root.bind('<<Q-event-T>>',self._on_windows_msg_timeout)
 			self.__root.bind('<<Q-event-Q>>',self._on_windows_msg_sync)
 			self.__root.bind('<<QUIT-event-QUIT>>',self._on_windows_msg_sync)
+			self.__root.bind('<<save-config-done>>', self._on_save_config_done)
 			
 			self.__left_frame.rowconfigure(10, weight=1)
 			self.__left_frame.columnconfigure(2, weight=1)

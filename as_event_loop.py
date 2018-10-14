@@ -47,14 +47,17 @@ class EventLoopThread(Thread):
 			except Exception as e:
 				fut.set_exception(e)
 		
-		f = functools.partial(asyncio.async, coro, loop=self.loop)
+
 		if current_thread() == self.tid:
-			return f() # We can call directly if we're not going between threads.
+			print("run self thread", coro);
+			return asyncio.create_task(coro) # We can call directly if we're not going between threads.
 		else:
 			# We're in a non-event loop thread so we use a Future
 			# to get the task from the event loop thread once
 			# it's ready.
+			f = functools.partial(asyncio.create_task, coro)
 			fut = Future()
+			#print("run other thread", coro);
 			self.loop.call_soon_threadsafe(_async_add, f, fut)
 			return fut.result()
 	
